@@ -173,7 +173,7 @@ function renderDashboard() {
           ${stat(docs.length,'Dokumente')}
           ${stat(state.cases.length,'Fälle')}
           ${stat(openTasks.length,'Offene Aufgaben')}
-          ${stat(state.organisations.length,'Organisationen')}
+          ${stat(briefDocs.length,'✉️ Brief nötig')}
         </div>
       </div>
     </div>
@@ -193,6 +193,10 @@ function renderDashboard() {
         <div class="grid">${activeCases.length ? activeCases.map(caseCard).join('') : empty('Noch keine Fälle. Sie entstehen automatisch aus Dokumenten.')}</div>
       </div>
       <div class="panel card-pad">
+        <div class="section-title"><h2>✉️ Brief nötig</h2><span class="small muted">Kommunikations-Check</span></div>
+        <div class="grid">${briefDocs.length ? briefDocs.slice(0,3).map(d => `<div class="item risk-${esc(d.analysis.risk)}"><div class="item-header"><h3>${esc(d.title)}</h3><span class="risk-pill" style="color:var(--red)">✉️ Brief</span></div><p class="small muted">${esc(d.analysis.organisations.join(', '))} · ${esc(d.analysis.channel.reason.slice(0,80))}</p><button class="btn ghost small" data-action="open-doc" data-id="${d.id}">Details</button></div>`).join('') : empty('Keine Dokumente die Brief erfordern.')}</div>
+      </div>
+      <div class="panel card-pad">
         <div class="section-title"><h2>🧠 Letzte Timeline</h2><span class="small muted">Gedächtnis-Verlauf</span></div>
         <div class="timeline">${state.timeline.slice(-5).reverse().map(eventView).join('') || empty('Noch keine Ereignisse.')}</div>
       </div>
@@ -210,7 +214,7 @@ function renderDocuments() {
     <div class="section-title"><h2>📄 Dokumente</h2><div class="row"><button class="btn primary" data-action="scan">📸 Scan/Upload</button><button class="btn" data-action="new-doc">+ Manuell</button></div></div>
     <div class="grid">${state.documents.length ? state.documents.slice().reverse().map(documentCard).join('') : `<div class="panel card-pad">${empty('Noch keine Dokumente. Starte mit Scan/Upload oder Text einfügen.')}</div>`}</div>`;
 }
-function documentCard(doc){return `<div class="panel card-pad risk-${esc(doc.analysis.risk)}"><div class="item-header"><div><h3>${esc(doc.title)}</h3><p>${esc(doc.analysis.summary)}</p></div><span class="risk-pill">${esc(doc.analysis.risk)}</span></div><div class="row"><span class="chip">${esc(doc.analysis.type)}</span><span class="chip">${esc(doc.analysis.organisations.join(', ')||'Org unbekannt')}</span><span class="chip">${doc.analysis.deadlines.length} Frist(en)</span><span class="chip">${esc(doc.analysis.channel.recommendation)}</span></div><div class="row"><button class="btn" data-action="open-doc" data-id="${doc.id}">Details</button><button class="btn" data-action="reply-doc" data-id="${doc.id}">Antwort</button><button class="btn ghost" data-action="speak-doc" data-id="${doc.id}">🔊</button><button class="btn ghost" data-action="create-task" data-id="${doc.id}">Aufgabe</button><button class="btn danger" data-action="delete-doc" data-id="${doc.id}">Löschen</button></div></div>`}
+function documentCard(doc){const ch=doc.comm||window.DocPilotCommunication?.analyzeLocally({text:doc.text,documentType:doc.analysis.type,organization:doc.analysis.organisations[0]||'',hasDeadline:doc.analysis.deadlines.length>0,risk:doc.analysis.risk})||{}; const chCol=ch.recommended_channel==='brief'?'#ff3b5f':ch.recommended_channel==='email'?'#00ff88':ch.recommended_channel==='both'?'#ffd166':'#9ca6c6'; const chLabel=ch.recommended_channel==='brief'?'✉️ Brief':ch.recommended_channel==='email'?'📧 E-Mail':ch.recommended_channel==='both'?'📧+✉️ Beides':'🤷 Unklar';return `<div class="panel card-pad risk-${esc(doc.analysis.risk)}"><div class="item-header"><div><h3>${esc(doc.title)}</h3><p>${esc(doc.analysis.summary)}</p></div><span class="risk-pill">${esc(doc.analysis.risk)}</span></div><div class="row"><span class="chip">${esc(doc.analysis.type)}</span><span class="chip">${esc(doc.analysis.organisations.join(', ')||'Org unbekannt')}</span><span class="chip">${doc.analysis.deadlines.length} Frist(en)</span><span class="chip" style="color:${chCol};border-color:color-mix(in srgb,${chCol} 45%,transparent)">${chLabel}</span></div><div class="row"><button class="btn" data-action="open-doc" data-id="${doc.id}">Details</button><button class="btn" data-action="reply-doc" data-id="${doc.id}">Antwort</button><button class="btn ghost" data-action="speak-doc" data-id="${doc.id}">🔊</button><button class="btn ghost" data-action="create-task" data-id="${doc.id}">Aufgabe</button><button class="btn danger" data-action="delete-doc" data-id="${doc.id}">Löschen</button></div></div>`}
 
 function renderCases() {
   const screen = document.getElementById('screen-cases');
@@ -254,6 +258,7 @@ function addDocument({title,text,source='upload',fileName=''}) {
   const caseId = getOrCreateCase(analysis, title);
   const doc = { id: uid('doc'), title, text, source, fileName, createdAt: new Date().toISOString(), caseId, analysis };
   state.documents.push(doc);
+  try { doc.comm = window.DocPilotCommunication?.analyzeLocally({text, documentType: analysis.type, organization: analysis.organisations[0]||'', hasDeadline: analysis.deadlines.length>0, risk: analysis.risk}); } catch(e) {}
   analysis.organisations.forEach(name => getOrCreateOrg(name, analysis.emails));
   analysis.persons.forEach(name => getOrCreatePerson(name));
   addTimeline({ title: `Dokument erfasst: ${title}`, context: analysis.summary, caseId, documentId: doc.id });
