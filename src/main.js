@@ -52,12 +52,13 @@ function boot() {
   document.getElementById('app').innerHTML = shellTemplate();
   bindGlobalEvents();
   render();
-  // Splash IMMER nach max 3s weg, egal ob Effekte crashen
+  // Splash IMMER nach max 2s weg
   const hideSplash = () => {
     const s = document.querySelector('.splash');
     if(s) { s.classList.add('hide'); setTimeout(() => s.remove(), 1000); }
   };
-  setTimeout(hideSplash, 2000);
+  setTimeout(hideSplash, 1800);
+  // Hintergrund-Effekte optional, crashen killt die App nicht
   try { initMatrix(); } catch(e) {}
   try { initLetterRain(); } catch(e) {}
   try { bootTerms(); } catch(e) {}
