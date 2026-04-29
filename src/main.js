@@ -52,11 +52,15 @@ function boot() {
   document.getElementById('app').innerHTML = shellTemplate();
   bindGlobalEvents();
   render();
-  initMatrix();
-  initLetterRain();
-  bootTerms();
-  setTimeout(() => document.querySelector('.splash')?.classList.add('hide'), 2300);
-  setTimeout(() => document.querySelector('.splash')?.remove(), 3300);
+  // Splash IMMER nach max 3s weg, egal ob Effekte crashen
+  const hideSplash = () => {
+    const s = document.querySelector('.splash');
+    if(s) { s.classList.add('hide'); setTimeout(() => s.remove(), 1000); }
+  };
+  setTimeout(hideSplash, 2000);
+  try { initMatrix(); } catch(e) {}
+  try { initLetterRain(); } catch(e) {}
+  try { bootTerms(); } catch(e) {}
 }
 
 document.addEventListener('DOMContentLoaded', boot);
