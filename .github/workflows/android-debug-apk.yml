@@ -26,13 +26,27 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build web app
-        run: npm run build
+      - name: Prepare dist folder (copy web assets)
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          cp -r src/* dist/ 2>/dev/null || true
+
+      - name: Check if Android project exists
+        id: check_android
+        run: |
+          if [ -d android/app/src/main ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Generate Android project
+        if: steps.check_android.outputs.exists == 'false'
         run: npx cap add android
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor (updates web assets, keeps icons)
+        if: steps.check_android.outputs.exists == 'true'
         run: npx cap sync android
 
       - name: Build debug APK

@@ -8,7 +8,8 @@
     "cap:init": "npx cap init DocPilot com.docpilot.knipexilino --web-dir .",
     "cap:add:android": "npx cap add android",
     "cap:sync": "npx cap sync android",
-    "cap:open:android": "npx cap open android"
+    "cap:open:android": "npx cap open android",
+    "build": "mkdir -p dist && cp index.html dist/ && cp -r src/* dist/ 2>/dev/null || true"
   },
   "devDependencies": {
     "@capacitor/android": "latest",
