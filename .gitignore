@@ -1,0 +1,12 @@
+node_modules/
+dist/
+android/
+.env
+*.apk
+*.aab
+.DS_Store
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+local-data/

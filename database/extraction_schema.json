@@ -1,0 +1,76 @@
+{
+  "document_type": "string",
+  "language": "de",
+  "summary_short": "string",
+  "summary_detailed": "string",
+  "sender": {
+    "name": "string",
+    "type": "person|organization|unknown",
+    "address": "string|null",
+    "email": "string|null",
+    "phone": "string|null"
+  },
+  "receiver": {
+    "name": "string",
+    "type": "person|organization|unknown",
+    "address": "string|null",
+    "email": "string|null",
+    "phone": "string|null"
+  },
+  "dates": {
+    "document_date": "YYYY-MM-DD|null",
+    "received_date": "YYYY-MM-DD|null",
+    "mentioned_dates": [
+      {
+        "date": "YYYY-MM-DD",
+        "label": "string",
+        "source_text": "string"
+      }
+    ]
+  },
+  "identifiers": {
+    "case_number": "string|null",
+    "customer_number": "string|null",
+    "invoice_number": "string|null",
+    "contract_number": "string|null",
+    "reference_number": "string|null"
+  },
+  "amounts": [
+    {
+      "amount": 0.0,
+      "currency": "EUR",
+      "label": "string",
+      "source_text": "string"
+    }
+  ],
+  "deadlines": [
+    {
+      "title": "string",
+      "due_date": "YYYY-MM-DD|null",
+      "due_time": "HH:MM|null",
+      "type": "payment|objection|submission|appointment|termination|contract|other",
+      "source_text": "string",
+      "confidence": 0.0,
+      "requires_user_confirmation": true
+    }
+  ],
+  "tasks": [
+    {
+      "title": "string",
+      "description": "string",
+      "priority": "low|normal|high|critical",
+      "due_date": "YYYY-MM-DD|null"
+    }
+  ],
+  "risk": {
+    "level": "low|medium|high|critical|unknown",
+    "reason": "string"
+  },
+  "recommended_next_steps": ["string"],
+  "suggested_case": {
+    "title": "string|null",
+    "is_new_case": true,
+    "reason": "string"
+  },
+  "confidence_notes": ["string"]
+}

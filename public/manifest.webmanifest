@@ -1,0 +1,9 @@
+{
+  "name": "DocPilot Knipexilino",
+  "short_name": "DocPilot",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#050510",
+  "theme_color": "#050510",
+  "description": "KI-Dokumenten-Assistent und Fallmanager"
+}

@@ -1,0 +1,9 @@
+{
+  "appId": "de.docpilot.knipexilino",
+  "appName": "DocPilot Knipexilino",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

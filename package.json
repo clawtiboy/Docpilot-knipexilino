@@ -1,0 +1,24 @@
+{
+  "name": "docpilot-knipexilino",
+  "version": "1.0.0",
+  "description": "DocPilot / Knipexilino - KI-Dokumenten-Assistent, Fallmanager und lokales Dokumenten-Gedaechtnis.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "android:init": "npx cap add android",
+    "android:sync": "npm run build && npx cap sync android",
+    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "check": "node --check src/main.js && node --check scripts/seed-demo.js"
+  },
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/core": "latest"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "latest",
+    "vite": "latest"
+  }
+}
