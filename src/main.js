@@ -52,7 +52,11 @@ function boot() {
   document.getElementById('app').innerHTML = shellTemplate();
   bindGlobalEvents();
   render();
-  // Hintergrund-Effekte optional
+  // Splash sofort ausblenden (100ms)
+  setTimeout(() => {
+    const s = document.querySelector('.splash');
+    if(s) { s.classList.add('hide'); setTimeout(() => s.remove(), 500); }
+  }, 100);
   try { initMatrix(); } catch(e) { console.warn('matrix skipped', e); }
   try { initLetterRain(); } catch(e) { console.warn('rain skipped', e); }
 }
@@ -63,6 +67,15 @@ function shellTemplate() {
   return `
     <canvas class="background-canvas" id="matrixCanvas"></canvas>
     <div class="letter-layer" id="letterLayer"></div>
+    <div class="splash">
+      <div class="splash-card">
+        <div class="logo-mark"><span>🤖</span></div>
+        <h1>DocPilot</h1>
+        <p>Knipexilino initialisiert dein Dokumenten-Gedächtnis.</p>
+        <div class="boot-terms" id="bootTerms">AOK · Jobcenter · IKK · Finanzamt</div>
+        <div class="progress"><div></div></div>
+      </div>
+    </div>
     <main class="app-shell">
       <header class="topbar">
         <div class="brand">
