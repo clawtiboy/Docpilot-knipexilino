@@ -52,11 +52,15 @@ function boot() {
   document.getElementById('app').innerHTML = shellTemplate();
   bindGlobalEvents();
   render();
-  // Splash sofort ausblenden (100ms)
-  setTimeout(() => {
-    const s = document.querySelector('.splash');
-    if(s) { s.classList.add('hide'); setTimeout(() => s.remove(), 500); }
-  }, 100);
+  // Splash nach 800ms ausblenden — KEIN try/catch nötig, kein DOM-Zugriff der crasht
+  const el = document.getElementById('splashScreen');
+  if (el) {
+    el.style.transition = 'opacity .25s ease, visibility .25s ease';
+    el.style.opacity = '0';
+    el.style.visibility = 'hidden';
+    setTimeout(() => { if (el.parentNode) el.parentNode.removeChild(el); }, 300);
+  }
+  // Hintergrund-Effekte sind optional
   try { initMatrix(); } catch(e) { console.warn('matrix skipped', e); }
   try { initLetterRain(); } catch(e) { console.warn('rain skipped', e); }
 }
@@ -67,13 +71,12 @@ function shellTemplate() {
   return `
     <canvas class="background-canvas" id="matrixCanvas"></canvas>
     <div class="letter-layer" id="letterLayer"></div>
-    <div class="splash">
+    <div class="splash" id="splashScreen">
       <div class="splash-card">
         <div class="logo-mark"><span>🤖</span></div>
         <h1>DocPilot</h1>
-        <p>Knipexilino initialisiert dein Dokumenten-Gedächtnis.</p>
-        <div class="boot-terms" id="bootTerms">AOK · Jobcenter · IKK · Finanzamt</div>
-        <div class="progress"><div></div></div>
+        <p>Lade Dokumenten-Manager...</p>
+        <div class="boot-terms">AOK · Jobcenter · IKK · Finanzamt</div>
       </div>
     </div>
     <main class="app-shell">
