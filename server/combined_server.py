@@ -81,7 +81,7 @@ def analyze():
             json={"model": MODEL, "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT + "\nAntworte NUR mit JSON."},
                 {"role": "user", "content": f"Dokument: {title}\n\n{text}"}
-            ]}, timeout=30)
+            ]}, timeout=15)
         result = resp.json()
         content = result["choices"][0]["message"]["content"]
         try:
@@ -111,10 +111,7 @@ def reply():
 @app.route("/communication/analyze", methods=["POST"])
 def communication_analyze():
     data = request.get_json() or {}
-    text = data.get("text", "")
-    doc_type = data.get("document_type", "")
-    org = data.get("organization", "")
-    result = analyze_communication(text, doc_type, org)
+    result = analyze_communication(data)
     return jsonify(result)
 
 # ---- OCR-Route ----
