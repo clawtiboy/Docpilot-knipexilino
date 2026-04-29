@@ -1,6 +1,5 @@
 node_modules/
 dist/
-android/
 .env
 *.apk
 *.aab
@@ -10,3 +9,4 @@ android/
 __pycache__/
 *.pyc
 local-data/
+# android/ wird benötigt für Icons

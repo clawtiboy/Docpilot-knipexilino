@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">DocPilot Knipexilino</string>
+    <string name="title_activity_main">DocPilot Knipexilino</string>
+    <string name="package_name">com.docpilot.knipexilino</string>
+    <string name="custom_url_scheme">com.docpilot.knipexilino</string>
+</resources>

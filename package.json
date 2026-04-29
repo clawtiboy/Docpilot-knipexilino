@@ -1,24 +1,18 @@
 {
-  "name": "docpilot-knipexilino",
-  "version": "1.0.0",
-  "description": "DocPilot / Knipexilino - KI-Dokumenten-Assistent, Fallmanager und lokales Dokumenten-Gedaechtnis.",
+  "name": "docpilot-knipexilino-integrated-v3",
+  "version": "0.3.0",
   "private": true,
-  "type": "module",
+  "description": "DocPilot/Knipexilino integrated static app shell with local document analysis, cases, organizations, OCR and speech hooks.",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "mkdir -p dist && node -e \"fs.writeFileSync('dist/index.html', fs.readFileSync('index.html','utf8').replace('<script>','<script type=module defer>'))\" && cp -f src/communication_engine.js dist/ 2>/dev/null; true",
-    "preview": "vite preview --host 0.0.0.0",
-    "android:init": "npx cap add android",
-    "android:sync": "npm run build && npx cap sync android",
-    "android:build": "npm run android:sync && cd android && ./gradlew assembleDebug",
-    "check": "node --check src/main.js && node --check scripts/seed-demo.js"
-  },
-  "dependencies": {
-    "@capacitor/android": "^8.3.1",
-    "@capacitor/core": "^8.3.1"
+    "start": "python3 -m http.server 8080",
+    "cap:init": "npx cap init DocPilot com.docpilot.knipexilino --web-dir .",
+    "cap:add:android": "npx cap add android",
+    "cap:sync": "npx cap sync android",
+    "cap:open:android": "npx cap open android"
   },
   "devDependencies": {
-    "@capacitor/cli": "^8.3.1",
-    "vite": "latest"
+    "@capacitor/android": "latest",
+    "@capacitor/cli": "latest",
+    "@capacitor/core": "latest"
   }
 }
