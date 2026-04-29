@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && cp src/communication_engine.js dist/ && mv dist/src/* dist/ 2>/dev/null; rmdir dist/src 2>/dev/null; sed -i \"s|src=\"/src/communication_engine.js\"|src=\"/communication_engine.js\"|\" dist/index.html",
     "preview": "vite preview --host 0.0.0.0",
     "android:init": "npx cap add android",
     "android:sync": "npm run build && npx cap sync android",
@@ -14,11 +14,11 @@
     "check": "node --check src/main.js && node --check scripts/seed-demo.js"
   },
   "dependencies": {
-    "@capacitor/android": "latest",
-    "@capacitor/core": "latest"
+    "@capacitor/android": "^8.3.1",
+    "@capacitor/core": "^8.3.1"
   },
   "devDependencies": {
-    "@capacitor/cli": "latest",
+    "@capacitor/cli": "^8.3.1",
     "vite": "latest"
   }
 }
