@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build && cp src/communication_engine.js dist/ && mv dist/src/* dist/ 2>/dev/null; rmdir dist/src 2>/dev/null; sed -i \"s|src=\"/src/communication_engine.js\"|src=\"/communication_engine.js\"|\" dist/index.html",
+    "build": "mkdir -p dist && node -e \"fs.writeFileSync('dist/index.html', fs.readFileSync('index.html','utf8').replace('<script>','<script type=module defer>'))\" && cp -f src/communication_engine.js dist/ 2>/dev/null; true",
     "preview": "vite preview --host 0.0.0.0",
     "android:init": "npx cap add android",
     "android:sync": "npm run build && npx cap sync android",
