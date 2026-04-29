@@ -51,7 +51,7 @@ def fallback_analysis(text: str) -> dict:
         "type": doc_type, "summary": text[:120] + ("..." if len(text) > 120 else ""),
         "organisations": organisations, "persons": persons,
         "deadlines": deadlines, "amounts": amounts, "risk": risk,
-        "reference_number": "", "channel": analyze_communication(text, doc_type, organisations[0] if organisations else ""),
+        "reference_number": "", "channel": analyze_communication({"text": text, "document_type": doc_type, "organization": organisations[0] if organisations else "", "risk": risk}),
         "action_required": risk in ("hoch", "mittel"),
         "action_deadline": deadlines[0]["date"] if deadlines else "",
         "suggested_response": f"Sehr geehrte Damen und Herren,\n\nhiermit..."
