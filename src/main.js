@@ -52,16 +52,9 @@ function boot() {
   document.getElementById('app').innerHTML = shellTemplate();
   bindGlobalEvents();
   render();
-  // Splash IMMER nach max 2s weg
-  const hideSplash = () => {
-    const s = document.querySelector('.splash');
-    if(s) { s.classList.add('hide'); setTimeout(() => s.remove(), 1000); }
-  };
-  setTimeout(hideSplash, 1800);
-  // Hintergrund-Effekte optional, crashen killt die App nicht
-  try { initMatrix(); } catch(e) {}
-  try { initLetterRain(); } catch(e) {}
-  try { bootTerms(); } catch(e) {}
+  // Hintergrund-Effekte optional
+  try { initMatrix(); } catch(e) { console.warn('matrix skipped', e); }
+  try { initLetterRain(); } catch(e) { console.warn('rain skipped', e); }
 }
 
 document.addEventListener('DOMContentLoaded', boot);
@@ -70,15 +63,6 @@ function shellTemplate() {
   return `
     <canvas class="background-canvas" id="matrixCanvas"></canvas>
     <div class="letter-layer" id="letterLayer"></div>
-    <div class="splash">
-      <div class="splash-card">
-        <div class="logo-mark"><span>🤖</span></div>
-        <h1>DocPilot</h1>
-        <p>Knipexilino initialisiert dein Dokumenten-Gedächtnis.</p>
-        <div class="boot-terms" id="bootTerms">AOK · Jobcenter · IKK · Finanzamt</div>
-        <div class="progress"><div></div></div>
-      </div>
-    </div>
     <main class="app-shell">
       <header class="topbar">
         <div class="brand">
@@ -334,4 +318,4 @@ function closeModal(){ currentModal?.remove(); currentModal=null; }
 
 function initMatrix(){ const canvas=document.getElementById('matrixCanvas'); const ctx=canvas.getContext('2d'); const words=['AOK','IKK','Jobcenter','Finanzamt','DRV','Bescheid','Mahnung','Frist','Antrag','Widerspruch','Aktenzeichen','Rechnung','Krankenkasse','§','BGB','SGB']; let drops=[]; function resize(){canvas.width=innerWidth;canvas.height=innerHeight;drops=Array(Math.ceil(canvas.width/18)).fill(0).map(()=>Math.random()*-80)} resize(); addEventListener('resize',resize); function draw(){ctx.fillStyle='rgba(5,5,16,.12)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.font='14px Share Tech Mono, monospace';drops.forEach((y,i)=>{const word=words[(Math.random()*words.length)|0];ctx.fillStyle=Math.random()>.92?'rgba(0,240,255,.45)':'rgba(0,255,136,.23)';ctx.fillText(word,i*18,y*18);drops[i]=y*18>canvas.height&&Math.random()>.975?0:y+1});requestAnimationFrame(draw)} draw(); }
 function initLetterRain(){ clearInterval(letterTimer); letterTimer=setInterval(()=>{ const layer=document.getElementById('letterLayer'); if(!layer)return; const source=[...state.organisations.map(o=>o.name),...state.tasks.map(t=>t.title.split(':')[0]),'AOK','Jobcenter','IKK','Finanzamt','Bescheid','Mahnung','Frist']; const token=document.createElement('div'); const risk=Math.random()>.78?'high':Math.random()>.48?'medium':'low'; token.className=`letter-token risk-${risk}`; token.textContent=source[(Math.random()*source.length)|0]||'Dokument'; token.style.left=`${Math.random()*92}vw`; token.style.setProperty('--fall-duration',`${9+Math.random()*9}s`); token.style.setProperty('--drift',`${-50+Math.random()*100}px`); token.style.setProperty('--rot',`${-18+Math.random()*36}deg`); layer.appendChild(token); setTimeout(()=>token.remove(),19000); },900); }
-function bootTerms(){ const el=document.getElementById('bootTerms'); const terms=['AOK','Jobcenter','IKK','Finanzamt','Mahnung','Bescheid','Frist','Widerspruch','Krankenkasse','Aktenzeichen']; let i=0; setInterval(()=>{ if(el) el.textContent=terms.slice(i,i+4).concat(terms.slice(0,Math.max(0,i+4-terms.length))).join(' · '); i=(i+1)%terms.length; },420); }
+
