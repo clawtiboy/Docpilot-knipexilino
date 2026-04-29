@@ -22,8 +22,8 @@ const defaultState = () => ({
   timeline: [],
   drafts: [],
   settings: {
-    aiProxyUrl: 'http://127.0.0.1:8787',
-    ocrProxyUrl: 'http://127.0.0.1:8766',
+    aiProxyUrl: 'https://docpilot-knipexilino-production.up.railway.app',
+    ocrProxyUrl: 'https://docpilot-knipexilino-production.up.railway.app',
     voiceRate: 0.92,
     privacyMode: true
   },
@@ -306,7 +306,7 @@ function openReply(id){ const d=state.documents.find(x=>x.id===id); if(!d)return
 function generateReply(doc){ const org=doc.analysis.organisations[0]||'Damen und Herren'; const subject=`Betreff: ${doc.analysis.type} / ${doc.title}`; const channel=`Hinweis: ${doc.analysis.channel.recommendation}. ${doc.analysis.channel.reason}`; return `Sehr geehrte Damen und Herren,\n\n${subject}\n\nich nehme Bezug auf Ihr Schreiben "${doc.title}". Bitte prüfen Sie den Sachverhalt erneut und bestätigen Sie mir den Eingang dieser Antwort schriftlich.\n\nErkannte Punkte:\n- Dokumenttyp: ${doc.analysis.type}\n- Frist: ${doc.analysis.deadlines.map(fmtDate).join(', ') || 'keine eindeutige Frist erkannt'}\n- Betrag: ${doc.analysis.amounts.join(', ') || 'kein Betrag erkannt'}\n\n${doc.analysis.risk==='kritisch'||doc.analysis.risk==='hoch'?'Zur Wahrung möglicher Fristen bitte ich um zeitnahe Bearbeitung.\n\n':''}Mit freundlichen Grüßen\n\n[Name]\n\n---\n${channel}\nOrganisation: ${org}`; }
 function saveDraft(docId){ const text=document.getElementById('replyText')?.value || ''; state.drafts.push({id:uid('draft'),documentId:docId,text,createdAt:new Date().toISOString()}); saveState(); closeModal(); alert('Entwurf gespeichert.'); }
 
-async function handleFileInput(e){ const file=e.target.files?.[0]; if(!file)return; try{ if(file.type.startsWith('text/')||/\.md$|\.txt$/i.test(file.name)){ const text=await file.text(); addDocument({title:file.name,text,source:'file',fileName:file.name}); switchTab('documents'); } else { const text=await tryOcr(file); if(text) addDocument({title:file.name,text,source:'ocr',fileName:file.name}); else { const ocrUrl=state.settings.ocrProxyUrl; openDocumentModal(`[OCR-Server nicht erreichbar]\nDatei: ${file.name}\n\nSo startest du den OCR-Server:\n1. Terminal öffnen\n2. cd server\n3. python3 ocr_server.py\n\nAktuelle OCR-URL: ${ocrUrl}\n\nAlternativ Text manuell einfügen:`); } switchTab('documents'); } } finally { e.target.value=''; } }
+async function handleFileInput(e){ const file=e.target.files?.[0]; if(!file)return; try{ if(file.type.startsWith('text/')||/\.md$|\.txt$/i.test(file.name)){ const text=await file.text(); addDocument({title:file.name,text,source:'file',fileName:file.name}); switchTab('documents'); } else { const text=await tryOcr(file); if(text) addDocument({title:file.name,text,source:'ocr',fileName:file.name}); else { const ocrUrl=state.settings.ocrProxyUrl; openDocumentModal(`[OCR nicht erreichbar]\nDatei: ${file.name}\n\nPrüfe in den Einstellungen ob die OCR-URL korrekt ist: ${ocrUrl}\n\nCloud-Server müssen laufen (Railway Deploy) oder alternativ Text manuell einfügen:`); } switchTab('documents'); } } finally { e.target.value=''; } }
 async function tryOcr(file){ const url=(state.settings.ocrProxyUrl||'').replace(/\/$/,''); if(!url) return ''; const dataUrl=await fileToDataUrl(file); try{ const res=await fetch(`${url}/ocr`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl,filename:file.name})}); if(!res.ok) throw new Error(`OCR ${res.status}`); const data=await res.json(); return data.text || ''; } catch(err){ console.warn(err); return ''; } }
 function fileToDataUrl(file){ return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)}); }
 
