@@ -100,5 +100,11 @@ def reply():
     return jsonify({"reply": response.json()["choices"][0]["message"]["content"]})
 
 
+@app.post("/communication/analyze")
+def communication_analyze_route():
+    payload = request.get_json(force=True, silent=True) or {}
+    return jsonify(analyze_communication(payload))
+
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=PORT)
